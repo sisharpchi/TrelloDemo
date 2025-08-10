@@ -39,7 +39,7 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
         if (!team.UserTeams.Any(u =>
             u.UserId == thisUserId &&
             (u.Role == TeamRole.Owner || u.Role == TeamRole.Admin)))
-        {
+        { 
             throw new UnauthorizedAccessException("Siz ushbu list-columnga task yarata olmaysiz.");
         }
 
