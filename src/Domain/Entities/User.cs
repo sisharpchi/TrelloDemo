@@ -20,4 +20,8 @@ public class User
     public UserConfirmer? Confirmer { get; set; }
 
     public ICollection<RefreshToken> RefreshTokens { get; set; }
+    public ICollection<UserTeam> UserTeams { get; set; }
+    public ICollection<TaskItem> AssignedTasks { get; set; }
+    public ICollection<Comment> Comments { get; set; }
+    public ICollection<ChatUser> ChatUsers { get; set; }
 }
