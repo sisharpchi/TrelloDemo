@@ -1,4 +1,6 @@
-﻿namespace Application.Dtos.Board;
+﻿using Application.Dtos.ListColumn;
+
+namespace Application.Dtos.Board;
 
 public class BoardDto
 {
