@@ -43,13 +43,7 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
             throw new UnauthorizedAccessException("Siz ushbu list-columnga task yarata olmaysiz.");
         }
 
-        var task = new TaskItem
-        {
-            Title = dto.Title,
-            Description = dto.Description,
-            DueDate = dto.DueDate,
-            ListColumnId = dto.ListColumnId
-        };
+        var task = MapToEntity(dto);
          
         return await _taskRepository.AddAsync(task, cancellationToken);
     }
@@ -89,7 +83,7 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
         var task = await _taskRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException("Task topilmadi.");
 
-        await _taskRepository.DeleteAsync(task, cancellationToken);
+        await _taskRepository.DeleteAsync(task.Id, cancellationToken);
     }
 
     public async Task<TaskItemDto?> GetByIdAsync(long id, long thisUserId, CancellationToken cancellationToken = default)
@@ -102,15 +96,7 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
         if (!team.UserTeams.Any(u => u.UserId == thisUserId))
             throw new UnauthorizedAccessException("Siz bu taskni ko‘ra olmaysiz.");
 
-        return new TaskItemDto
-        {
-            Id = task.Id,
-            Title = task.Title,
-            Description = task.Description,
-            DueDate = task.DueDate,
-            ListColumnId = task.ListColumnId,
-            AssignedUserId = task.AssignedUserId
-        };
+        return MapToDto(task);
     }
 
     public async Task<ICollection<TaskItemDto>> GetByListColumnIdAsync(long listColumnId, long thisUserId, CancellationToken cancellationToken = default)
@@ -129,15 +115,7 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
 
         var tasks = await _taskRepository.GetByListColumnIdAsync(listColumnId, cancellationToken);
 
-        return tasks.Select(t => new TaskItemDto
-        {
-            Id = t.Id,
-            Title = t.Title,
-            Description = t.Description,
-            DueDate = t.DueDate,
-            ListColumnId = t.ListColumnId,
-            AssignedUserId = t.AssignedUserId
-        }).ToList();
+        return tasks.Select(t => MapToDto(t)).ToList();
     }
 
     public async Task MoveToListAsync(long taskId, long targetListId, long thisUserId, CancellationToken cancellationToken = default)
@@ -179,7 +157,7 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
         if (!team.UserTeams.Any(u => u.UserId == assignedUserId))
             throw new InvalidOperationException("Berilayotgan foydalanuvchi team a’zosi emas.");
 
-        task.AssignedUserId = assignedUserId;
+        task.AssignedToId = assignedUserId;
 
         await _taskRepository.UpdateAsync(task, cancellationToken);
     }
@@ -198,11 +176,35 @@ public class TaskService(ITaskItemRepository _taskRepository, IListColumnReposit
         var task = await _taskRepository.GetByIdAsync(taskId, cancellationToken)
             ?? throw new KeyNotFoundException("Task topilmadi.");
 
-        if (task.AssignedUserId != removedUserId)
+        if (task.AssignedToId != removedUserId)
             throw new InvalidOperationException("Berilgan foydalanuvchi ushbu taskga biriktirilmagan.");
 
-        task.AssignedUserId = null;
+        task.AssignedToId = null;
 
         await _taskRepository.UpdateAsync(task, cancellationToken);
+    }
+
+    private TaskItem MapToEntity(TaskItemCreateDto taskItemCreateDto)
+    {
+        return new TaskItem()
+        {
+            Title = taskItemCreateDto.Title,
+            Description = taskItemCreateDto.Description,
+            DueDate = taskItemCreateDto.DueDate,
+            ListColumnId = taskItemCreateDto.ListColumnId
+        };
+    }
+
+    private TaskItemDto MapToDto(TaskItem task)
+    {
+        return new TaskItemDto
+        {
+            Id = task.Id,
+            Title = task.Title,
+            Description = task.Description,
+            DueDate = task.DueDate,
+            ListColumnId = task.ListColumnId,
+            AssignedUserId = task.AssignedToId
+        };
     }
 }
