@@ -12,13 +12,18 @@ public static class DependecyInjectionsConfiguration
 {
     public static void ConfigureDependecies(this IServiceCollection services)
     {
+        services.AddSignalR();
+
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ITeamService, TeamService>();
-        //services.AddScoped<IBoardService, BoardService>();
-
+        services.AddScoped<IBoardService, BoardService>();
+        services.AddScoped<IListColumnService, ListColumnService>();
+        services.AddScoped<ITaskService, TaskService>();
+        services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IChatService, ChatService>();
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -32,7 +37,6 @@ public static class DependecyInjectionsConfiguration
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<ITaskItemRepository, TaskItemRepository>();
             
-
         services.AddScoped<IValidator<UserCreateDto>, UserCreateDtoValidator>();
         services.AddScoped<IValidator<UserLoginDto>, UserLoginDtoValidator>();
     }

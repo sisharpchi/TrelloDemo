@@ -11,4 +11,9 @@ public class Comment
 
     public long AuthorId { get; set; }
     public User Author { get; set; }
+
+    public long? ParentCommentId { get; set; }
+    public Comment? ParentComment { get; set; }
+
+    public ICollection<Comment> ReplyComments { get; set; }
 }

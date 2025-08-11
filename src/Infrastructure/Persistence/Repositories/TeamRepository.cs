@@ -59,6 +59,10 @@ public class TeamRepository(AppDbContext _context) : ITeamRepository
     {
         return await _context.UserTeams
             .Where(ut => ut.UserId == userId)
+            .Include(ut => ut.Team)
+                .ThenInclude(t => t.UserTeams)
+                    .ThenInclude(ut => ut.User)
+                        .ThenInclude(u => u.Role)
             .Select(ut => ut.Team)
             .ToListAsync(cancellationToken);
     }

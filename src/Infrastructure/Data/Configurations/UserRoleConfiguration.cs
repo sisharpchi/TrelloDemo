@@ -14,5 +14,11 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 
         builder.Property(r => r.Name).HasMaxLength(50).IsRequired();
         builder.Property(r => r.Description).HasMaxLength(255);
+
+        builder.HasData(
+            new UserRole { Id = 1, Name = "User", Description = "Oddiy foydalanuvchi" },
+            new UserRole { Id = 2, Name = "Admin", Description = "Administrator" },
+            new UserRole { Id = 3, Name = "SuperAdmin", Description = "Bosh administrator" }
+        );
     }
 }

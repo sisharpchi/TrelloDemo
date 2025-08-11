@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Services;
+using Application.Dtos.Chat;
 using Application.Dtos.Enums;
 using Application.Dtos.Team;
 using Core.Errors;
@@ -8,15 +9,34 @@ using Domain.Enums;
 
 namespace Application.Services;
 
-public class TeamService(ITeamRepository _teamRepository, IUserRepository _userRepository) : ITeamService
+public class TeamService(ITeamRepository _teamRepository, IUserRepository _userRepository, IChatService _chatService) : ITeamService
 {
     public async Task<long> CreateAsync(TeamCreateDto dto, long thisUserId, CancellationToken cancellationToken = default)
     {
         var team = ConvertCreateDtoToTeamEntity(dto);
-
+        team.UserTeams = new List<UserTeam>
+        {
+            new UserTeam
+            {
+                UserId = thisUserId,
+                Role = TeamRole.Owner
+            }
+        };
         var teamId = await _teamRepository.AddAsync(team, cancellationToken);
 
-        await AddMemberAsync(teamId, thisUserId, thisUserId, cancellationToken);
+        //await AddMemberAsync(teamId, thisUserId, thisUserId, cancellationToken);
+
+        var chat = new ChatCreateDto()
+        {
+            Name = team.Name + "'s chat",
+            TeamId = teamId,
+            Bio = ""
+        };
+
+        var chatId = await _chatService.CreateAsync(chat, thisUserId);
+
+        team.ChatId = chatId;
+        await _teamRepository.UpdateAsync(team);
 
         return teamId;
     }
@@ -75,6 +95,7 @@ public class TeamService(ITeamRepository _teamRepository, IUserRepository _userR
                    ?? throw new KeyNotFoundException("Team not found");
 
         var isOwner = team.UserTeams.FirstOrDefault(m => m.UserId == thisUserId);
+
         if (isOwner.Role != (TeamRole)TeamRoleDto.Owner || isOwner.Role != (TeamRole)TeamRoleDto.Admin)
         {
             throw new ForbiddenException("San bu teamni owneri yoki admini emassan");

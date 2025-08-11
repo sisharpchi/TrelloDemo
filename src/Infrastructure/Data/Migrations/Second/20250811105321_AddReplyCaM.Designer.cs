@@ -4,16 +4,19 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations.First
+namespace Infrastructure.Data.Migrations.Second
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250811105321_AddReplyCaM")]
+    partial class AddReplyCaM
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,7 +318,7 @@ namespace Infrastructure.Data.Migrations.First
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("ChatId")
+                    b.Property<long>("ChatId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
@@ -333,8 +336,7 @@ namespace Infrastructure.Data.Migrations.First
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId")
-                        .IsUnique()
-                        .HasFilter("[ChatId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Teams");
                 });
@@ -639,7 +641,8 @@ namespace Infrastructure.Data.Migrations.First
                     b.HasOne("Domain.Entities.Chat", "Chat")
                         .WithOne("Team")
                         .HasForeignKey("Domain.Entities.Team", "ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Chat");
                 });

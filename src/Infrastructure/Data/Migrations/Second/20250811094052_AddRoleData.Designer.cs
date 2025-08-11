@@ -4,16 +4,19 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations.First
+namespace Infrastructure.Data.Migrations.Second
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250811094052_AddRoleData")]
+    partial class AddRoleData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,17 +157,12 @@ namespace Infrastructure.Data.Migrations.First
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<long?>("ParentCommentId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("TaskItemId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("ParentCommentId");
 
                     b.HasIndex("TaskItemId");
 
@@ -213,9 +211,6 @@ namespace Infrastructure.Data.Migrations.First
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<long?>("ReplyMessageId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("SenderId")
                         .HasColumnType("bigint");
 
@@ -225,8 +220,6 @@ namespace Infrastructure.Data.Migrations.First
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
-
-                    b.HasIndex("ReplyMessageId");
 
                     b.HasIndex("SenderId");
 
@@ -315,7 +308,7 @@ namespace Infrastructure.Data.Migrations.First
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("ChatId")
+                    b.Property<long>("ChatId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
@@ -333,8 +326,7 @@ namespace Infrastructure.Data.Migrations.First
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId")
-                        .IsUnique()
-                        .HasFilter("[ChatId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Teams");
                 });
@@ -550,11 +542,6 @@ namespace Infrastructure.Data.Migrations.First
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Comment", "ParentComment")
-                        .WithMany("ReplyComments")
-                        .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Domain.Entities.TaskItem", "TaskItem")
                         .WithMany("Comments")
                         .HasForeignKey("TaskItemId")
@@ -562,8 +549,6 @@ namespace Infrastructure.Data.Migrations.First
                         .IsRequired();
 
                     b.Navigation("Author");
-
-                    b.Navigation("ParentComment");
 
                     b.Navigation("TaskItem");
                 });
@@ -587,11 +572,6 @@ namespace Infrastructure.Data.Migrations.First
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Message", "ReplyMessage")
-                        .WithMany("ReplyMessages")
-                        .HasForeignKey("ReplyMessageId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("Domain.Entities.User", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId")
@@ -599,8 +579,6 @@ namespace Infrastructure.Data.Migrations.First
                         .IsRequired();
 
                     b.Navigation("Chat");
-
-                    b.Navigation("ReplyMessage");
 
                     b.Navigation("Sender");
                 });
@@ -639,7 +617,8 @@ namespace Infrastructure.Data.Migrations.First
                     b.HasOne("Domain.Entities.Chat", "Chat")
                         .WithOne("Team")
                         .HasForeignKey("Domain.Entities.Team", "ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Chat");
                 });
@@ -696,19 +675,9 @@ namespace Infrastructure.Data.Migrations.First
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Comment", b =>
-                {
-                    b.Navigation("ReplyComments");
-                });
-
             modelBuilder.Entity("Domain.Entities.ListColumn", b =>
                 {
                     b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Message", b =>
-                {
-                    b.Navigation("ReplyMessages");
                 });
 
             modelBuilder.Entity("Domain.Entities.TaskItem", b =>

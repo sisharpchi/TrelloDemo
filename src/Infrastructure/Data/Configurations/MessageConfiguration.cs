@@ -22,5 +22,10 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
             .WithMany()
             .HasForeignKey(m => m.SenderId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(c => c.ReplyMessage)
+            .WithMany(p => p.ReplyMessages)
+            .HasForeignKey(c => c.ReplyMessageId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

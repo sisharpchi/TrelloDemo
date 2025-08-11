@@ -11,4 +11,9 @@ public class Message
 
     public long SenderId { get; set; }
     public User Sender { get; set; }
+
+    public long? ReplyMessageId { get; set; }
+    public Message? ReplyMessage { get; set; }
+
+    public ICollection<Message> ReplyMessages { get; set; }
 }

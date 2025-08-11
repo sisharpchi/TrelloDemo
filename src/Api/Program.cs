@@ -1,6 +1,7 @@
 
 using Api.Configurations;
 using Api.Endpoints;
+using Application.Helpers.SignalR;
 using Core.Extensions;
 
 namespace Api
@@ -62,7 +63,15 @@ namespace Api
             app.MapRoleEndpoints();
             app.MapAdminEndpoints();
             app.MapTeamEndpoints();
-            
+            app.MapBoardEndpoints();
+            app.MapListColumnEndpoints();
+            app.MapTaskEndpoints();
+            app.MapChatEndpoints();
+            app.MapMessageEndpoints();
+
+            //app.MapHub<MessageHub>("/hubs/messages");
+            app.MapHub<ChatHub>("/hubs/chats");
+
             app.MapControllers();
 
             app.Run();
