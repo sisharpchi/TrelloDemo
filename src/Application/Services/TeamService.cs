@@ -47,7 +47,7 @@ public class TeamService(ITeamRepository _teamRepository, IUserRepository _userR
                    ?? throw new KeyNotFoundException("Team not found");
 
         var role = team.UserTeams.FirstOrDefault(u => u.UserId == thisUserId);
-        if (role.Role != (TeamRole)TeamRoleDto.Owner || role.Role != (TeamRole)TeamRoleDto.Admin)
+        if (role.Role != (TeamRole)TeamRoleDto.Owner && role.Role != (TeamRole)TeamRoleDto.Admin)
         {
             throw new ForbiddenException("Sizga Teamni malumotlari o'zgartirishga ruxsat yo'q");
         }
@@ -64,7 +64,7 @@ public class TeamService(ITeamRepository _teamRepository, IUserRepository _userR
                    ?? throw new KeyNotFoundException("Team not found");
 
         var role = team.UserTeams.FirstOrDefault(u => u.UserId == thisUserId);
-        if (role.Role != (TeamRole)TeamRoleDto.Owner || role.Role != (TeamRole)TeamRoleDto.Admin)
+        if (role.Role != (TeamRole)TeamRoleDto.Owner && role.Role != (TeamRole)TeamRoleDto.Admin)
         {
             throw new ForbiddenException("Sizga Teamni malumotlari o'zgartirishga ruxsat yo'q");
         }
@@ -96,7 +96,7 @@ public class TeamService(ITeamRepository _teamRepository, IUserRepository _userR
 
         var isOwner = team.UserTeams.FirstOrDefault(m => m.UserId == thisUserId);
 
-        if (isOwner.Role != (TeamRole)TeamRoleDto.Owner || isOwner.Role != (TeamRole)TeamRoleDto.Admin)
+        if (isOwner.Role != (TeamRole)TeamRoleDto.Owner && isOwner.Role != (TeamRole)TeamRoleDto.Admin)
         {
             throw new ForbiddenException("San bu teamni owneri yoki admini emassan");
         }
@@ -122,7 +122,7 @@ public class TeamService(ITeamRepository _teamRepository, IUserRepository _userR
                    ?? throw new KeyNotFoundException("Team not found");
 
         var isOwner = team.UserTeams.FirstOrDefault(m => m.UserId == thisUserId);
-        if (isOwner.Role != (TeamRole)TeamRoleDto.Owner || isOwner.Role != (TeamRole)TeamRoleDto.Admin)
+        if (isOwner.Role != (TeamRole)TeamRoleDto.Owner && isOwner.Role != (TeamRole)TeamRoleDto.Admin)
         {
             throw new ForbiddenException("San bu teamni owneri yoki admini emassan");
         }

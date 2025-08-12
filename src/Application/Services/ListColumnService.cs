@@ -25,7 +25,15 @@ public class ListColumnService(IListColumnRepository _listColumnRepository, IBoa
         }
 
         var listColumn = ConvertDtoToListColumnEntity(dto);
-        listColumn.Order = board.Lists.Count + 1;
+        int nextOrder = 1;
+
+        if (board.Lists != null && board.Lists.Any())
+        {
+            // Eng katta orderni topib +1 qo‘shamiz
+            nextOrder = board.Lists.Max(l => l.Order) + 1;
+        }
+
+        listColumn.Order = nextOrder;
 
         return await _listColumnRepository.AddAsync(listColumn, cancellationToken);
     }

@@ -38,6 +38,7 @@ public class BoardRepository(AppDbContext _context) : IBoardRepository
     public async Task<Board?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         return await _context.Boards
+            .Include(b => b.Lists)
             .Include(b => b.Team)
                 .ThenInclude(b => b.UserTeams)
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
