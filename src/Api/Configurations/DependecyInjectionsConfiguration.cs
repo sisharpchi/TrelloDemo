@@ -24,6 +24,7 @@ public static class DependecyInjectionsConfiguration
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IChatService, ChatService>();
+        services.AddScoped<ICommentService, CommentService>();
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

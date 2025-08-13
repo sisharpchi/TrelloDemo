@@ -68,11 +68,13 @@ namespace Api
             app.MapTaskEndpoints();
             app.MapChatEndpoints();
             app.MapMessageEndpoints();
+            app.MapCommentEndpoints();
 
-            //app.MapHub<MessageHub>("/hubs/messages");
+            app.MapHub<NotificationHub>("/hubs/notifications");
             app.MapHub<ChatHub>("/hubs/chats");
 
             app.MapControllers();
+
 
             app.Run();
         }

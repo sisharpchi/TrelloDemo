@@ -40,6 +40,8 @@ public class TaskItemRepository(AppDbContext _context) : ITaskItemRepository
         return await _context.TaskItems
             .Include(t => t.AssignedTo)
             .Include(t => t.ListColumn)
+                .ThenInclude(t => t.Board)
+                    .ThenInclude(t => t.Team)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
     }
 

@@ -32,6 +32,7 @@ public class CommentRepository(AppDbContext _context) : ICommentRepository
     public async Task<Comment?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         return await _context.Comments
+            .Include(c => c.ReplyComments)
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
